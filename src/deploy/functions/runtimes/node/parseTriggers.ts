@@ -51,6 +51,9 @@ export interface TriggerAnnotation {
   eventTrigger?: {
     eventType: string;
     resource: string;
+    channelId?: string;
+    channelLocation?: string;
+    filters?: Record<string, string>;
     // Deprecated
     service: string;
   };
@@ -112,6 +115,7 @@ function parseTriggers(
 
     parser.on("message", (message) => {
       if (message.triggers) {
+        console.log(message.triggers)
         resolve(message.triggers);
       } else if (message.error) {
         reject(new FirebaseError(message.error, { exit: 1 }));
@@ -216,15 +220,20 @@ export function addResourcesToBackend(
       triggered = {
         eventTrigger: {
           eventType: annotation.eventTrigger!.eventType,
-          eventFilters: [
-            {
-              attribute: "resource",
-              value: annotation.eventTrigger!.resource,
-            },
-          ],
           retry: !!annotation.failurePolicy,
+          eventFilters: [],
+          channel: getChannel(projectId, annotation?.eventTrigger?.channelId,  annotation?.eventTrigger?.channelLocation),
         },
       };
+
+      if (annotation.eventTrigger!.resource) {
+        triggered.eventTrigger.eventFilters.push(
+          {
+            attribute: "resource",
+            value: annotation.eventTrigger!.resource,
+          },
+        );
+      }
 
       // TODO: yank this edge case for a v2 trigger on the pre-container contract
       // once we use container contract for the functionsv2 experiment.
@@ -306,4 +315,18 @@ export function addResourcesToBackend(
 
     mergeRequiredAPIs(want);
   }
+}
+
+function getChannel(projectId: string, channelId?: string, channelLocation?: string): string | undefined {
+  console.log("-------getChannelId " + projectId + "/" + channelLocation + "/" + channelId)
+  if (!channelId) {
+    return undefined;
+  }
+  if (channelId.includes("{project}")) {
+    return channelId.replace("{project}", projectId);
+  }
+  if (channelId.includes("/")) {
+    return channelId;
+  }
+  return `projects/${projectId}/locations/${channelLocation}/channels/${channelId}`;
 }

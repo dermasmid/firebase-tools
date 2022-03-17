@@ -126,6 +126,7 @@ function parseEndpoints(
         retry: "boolean",
         region: "string",
         serviceAccountEmail: "string",
+        channel: "string",
       });
       triggered = { eventTrigger: ep.eventTrigger };
       for (const eventFilter of triggered.eventTrigger.eventFilters) {

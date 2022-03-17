@@ -98,6 +98,8 @@ export interface EventTrigger {
    * This field is ignored for v1 and defaults to the
    */
   serviceAccountEmail?: string;
+
+  channel?: string;
 }
 
 /** Something that has an EventTrigger */
