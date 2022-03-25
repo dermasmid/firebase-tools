@@ -10,7 +10,7 @@ import * as runtimes from "../deploy/functions/runtimes";
 import * as proto from "./proto";
 import * as utils from "../utils";
 
-export const API_VERSION = "v2beta";
+export const API_VERSION = "v2alpha";
 
 const client = new Client({
   urlPrefix: functionsV2Origin,
