@@ -119,7 +119,7 @@ function parseEndpoints(
   for (const region of ep.region || [defaultRegion]) {
     let triggered: backend.Triggered;
     if (backend.isEventTriggered(ep)) {
-      requireKeys(prefix + ".eventTrigger", ep.eventTrigger, "eventType", "eventFilters");
+      requireKeys(prefix + ".eventTrigger", ep.eventTrigger, "eventType");
       assertKeyTypes(prefix + ".eventTrigger", ep.eventTrigger, {
         eventFilters: "array",
         eventType: "string",
@@ -129,10 +129,12 @@ function parseEndpoints(
         channel: "string",
       });
       triggered = { eventTrigger: ep.eventTrigger };
-      for (const eventFilter of triggered.eventTrigger.eventFilters) {
-        if (eventFilter.attribute === "topic" && !eventFilter.value.startsWith("projects/")) {
-          // Construct full pubsub topic name.
-          eventFilter.value = `projects/${project}/topics/${eventFilter.value}`;
+      if (triggered.eventTrigger.eventFilters) {
+        for (const eventFilter of triggered.eventTrigger.eventFilters) {
+          if (eventFilter.attribute === "topic" && !eventFilter.value.startsWith("projects/")) {
+            // Construct full pubsub topic name.
+            eventFilter.value = `projects/${project}/topics/${eventFilter.value}`;
+          }
         }
       }
     } else if (backend.isHttpsTriggered(ep)) {

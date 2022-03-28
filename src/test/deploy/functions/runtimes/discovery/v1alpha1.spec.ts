@@ -99,27 +99,19 @@ describe("backendFromV1Alpha1", () => {
     describe("Event triggers", () => {
       const validTrigger: backend.EventTrigger = {
         eventType: "google.pubsub.v1.topic.publish",
-        eventFilters: [
-          {
-            attribute: "resource",
-            value: "projects/p/topics/t",
-          },
-        ],
         retry: true,
         region: "global",
         serviceAccountEmail: "root@",
       };
-      for (const key of ["eventType", "eventFilters"]) {
-        it(`missing event trigger key ${key}`, () => {
-          const eventTrigger = { ...validTrigger } as Record<string, unknown>;
-          delete eventTrigger[key];
-          assertParserError({
-            endpoints: {
-              func: { ...MIN_ENDPOINT, eventTrigger },
-            },
-          });
+      it(`missing event trigger key eventType`, () => {
+        const eventTrigger = { ...validTrigger } as Record<string, unknown>;
+        delete eventTrigger["eventType"];
+        assertParserError({
+          endpoints: {
+            func: { ...MIN_ENDPOINT, eventTrigger },
+          },
         });
-      }
+      });
 
       const invalidEntries = {
         eventType: { foo: "bar" },

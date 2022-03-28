@@ -233,7 +233,7 @@ export function addResourcesToBackend(
       }
 
       if (annotation.eventTrigger!.resource) {
-        triggered.eventTrigger.eventFilters.push({
+        triggered.eventTrigger.eventFilters!.push({
           attribute: "resource",
           value: annotation.eventTrigger!.resource,
         });

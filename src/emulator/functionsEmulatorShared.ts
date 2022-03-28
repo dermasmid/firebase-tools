@@ -182,7 +182,7 @@ export function emulatedFunctionsFromEndpoints(
           resource: resourceFilter.value,
         };
       } else {
-        const [eventFilter] = endpoint.eventTrigger.eventFilters;
+        const [eventFilter] = endpoint.eventTrigger.eventFilters || [];
         if (!eventFilter) {
           logger.debug(
             `Invalid event trigger ${JSON.stringify(

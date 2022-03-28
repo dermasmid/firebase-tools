@@ -447,14 +447,16 @@ export function functionFromEndpoint(endpoint: backend.Endpoint, source: Storage
       }
       gcfFunction.eventTrigger.pubsubTopic = pubsubFilter.value;
 
-      for (const filter of endpoint.eventTrigger.eventFilters) {
-        if (filter.attribute === "topic") {
-          continue;
+      if (endpoint.eventTrigger.eventFilters) {
+        for (const filter of endpoint.eventTrigger.eventFilters) {
+          if (filter.attribute === "topic") {
+            continue;
+          }
+          if (!gcfFunction.eventTrigger.eventFilters) {
+            gcfFunction.eventTrigger.eventFilters = [];
+          }
+          gcfFunction.eventTrigger.eventFilters.push(filter);
         }
-        if (!gcfFunction.eventTrigger.eventFilters) {
-          gcfFunction.eventTrigger.eventFilters = [];
-        }
-        gcfFunction.eventTrigger.eventFilters.push(filter);
       }
     } else {
       gcfFunction.eventTrigger.eventFilters = endpoint.eventTrigger.eventFilters;
@@ -514,13 +516,13 @@ export function endpointFromFunction(gcfFunction: CloudFunction): backend.Endpoi
       },
     };
     if (gcfFunction.eventTrigger.pubsubTopic) {
-      trigger.eventTrigger.eventFilters.push({
+      trigger.eventTrigger.eventFilters!.push({
         attribute: "topic",
         value: gcfFunction.eventTrigger.pubsubTopic,
       });
     } else {
       for (const { attribute, value } of gcfFunction.eventTrigger.eventFilters || []) {
-        trigger.eventTrigger.eventFilters.push({ attribute, value });
+        trigger.eventTrigger.eventFilters!.push({ attribute, value });
       }
     }
     proto.renameIfPresent(

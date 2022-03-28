@@ -80,7 +80,7 @@ export interface EventTrigger {
    * V2 will have arbitrary filters and some EventArc filters will be
    * top-level keys in the GCF API (e.g. "pubsubTopic").
    */
-  eventFilters: EventFilter[];
+  eventFilters?: EventFilter[];
 
   /** Should failures in a function execution cause an event to be retried. */
   retry: boolean;
@@ -583,7 +583,7 @@ export function findEventFilter(
   endpoint: Endpoint & EventTriggered,
   attribute: EventFilterAttribute
 ): EventFilter | undefined {
-  return endpoint.eventTrigger.eventFilters.find((ef) => ef.attribute === attribute);
+  return endpoint.eventTrigger.eventFilters?.find((ef) => ef.attribute === attribute);
 }
 
 /**
