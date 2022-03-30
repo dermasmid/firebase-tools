@@ -226,8 +226,8 @@ export function createCloudEndpoints(emulator: StorageEmulator): Router {
         authorization: req.header("authorization"),
       });
 
-      const { host, port } = emulatorInfo;
-      const uploadUrl = `http://${host}:${port}/upload/storage/v1/b/${req.params.bucketId}/o?name=${name}&uploadType=resumable&upload_id=${upload.id}`;
+      const { port } = emulatorInfo;
+      const uploadUrl = `http://${req.hostname}:${port}/upload/storage/v1/b/${req.params.bucketId}/o?name=${name}&uploadType=resumable&upload_id=${upload.id}`;
       return res.header("location", uploadUrl).sendStatus(200);
     }
 
@@ -360,7 +360,7 @@ function sendFileBytes(md: StoredFileMetadata, data: Buffer, req: Request, res: 
   res.setHeader("Accept-Ranges", "bytes");
   res.setHeader("Content-Type", md.contentType);
   res.setHeader("Content-Disposition", md.contentDisposition);
-  res.setHeader("Content-Encoding", md.contentEncoding);
+  res.setHeader("Content-Encoding", isGZipped ? "identity" : md.contentEncoding);
   res.setHeader("ETag", md.etag);
   res.setHeader("Cache-Control", md.cacheControl);
   res.setHeader("x-goog-generation", `${md.generation}`);
